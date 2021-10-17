@@ -20,49 +20,43 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.recyclerview.widget.ListAdapter
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.trackmysleepquality.R
 import com.example.android.trackmysleepquality.convertDurationToFormatted
 import com.example.android.trackmysleepquality.convertNumericQualityToString
 import com.example.android.trackmysleepquality.database.SleepNight
 
-/**SleepNightAdapter.ViewHolder will make Adpater use the ViewHolder created**/
-class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
+
+
+/**SleepNightAdapter.ViewHolder will make Adapter use the ViewHolder created**/
+class SleepNightAdapter : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(SleepNightDiffCallback()) {
     var data = listOf<SleepNight>() /**data that holds the list of nights**/
 
-    /**Let the RecyclerView know when data changes**/
-    set(value) {
-        field = value
-        notifyDataSetChanged()
-    }
 
-    /**Create and inflate a view for data
+    /**inflate a view for data
      * list_item_sleep_night is the layout created for the ViewHolder**/
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val view = layoutInflater.inflate(R.layout.list_item_sleep_night, parent, false)
-        return ViewHolder(view)
+        return ViewHolder.from(parent)
     }
 
     /**Called by RecyclerView to display Item at a specified position and update the list**/
     /**It will be called when there is scrolling item or item on the screen**/
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = data[position]
+        val item = getItem(position)
         holder.bind(item)
 
     }
 
 
-    /**Return the total number of Items**/
-    override fun getItemCount() = data.size
-
     /**Creating a ViewHolder class that will hold the views the recyclerView will use
      * It has its own layout, so it gets reference to these views**/
-    class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
-        val sleepLength : TextView = itemView.findViewById(R.id.sleep_length)
-        val quality : TextView = itemView.findViewById(R.id.sleep_quality)
-        val qualityImage : ImageView = itemView.findViewById(R.id.quality_image)
+    class ViewHolder private constructor(itemView : View) : RecyclerView.ViewHolder(itemView){
+        private val sleepLength : TextView = itemView.findViewById(R.id.sleep_length)
+        private val quality : TextView = itemView.findViewById(R.id.sleep_quality)
+        private val qualityImage : ImageView = itemView.findViewById(R.id.quality_image)
 
 
         fun bind(item: SleepNight) {
@@ -81,6 +75,28 @@ class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
                 }
             )
         }
+
+
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val view = layoutInflater.inflate(R.layout.list_item_sleep_night, parent, false)
+                return ViewHolder(view)
+            }
+        }
+    }
+
+
+    /**Compares two items( an older & a new) and updates the changes**/
+    class SleepNightDiffCallback : DiffUtil.ItemCallback<SleepNight>(){
+        override fun areItemsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
+            return oldItem.nightId == newItem.nightId
+        }
+
+        override fun areContentsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
+            return oldItem == newItem
+        }
+
     }
 
 }
