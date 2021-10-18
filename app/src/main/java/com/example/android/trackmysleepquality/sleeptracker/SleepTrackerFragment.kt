@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.android.trackmysleepquality.R
 import com.example.android.trackmysleepquality.database.SleepDatabase
 import com.example.android.trackmysleepquality.databinding.FragmentSleepTrackerBinding
@@ -100,6 +101,13 @@ class SleepTrackerFragment : Fragment() {
         /**Tell the RecyclerView about the adapter**/
         val adapter = SleepNightAdapter()
         binding.sleepList.adapter = adapter
+
+        /**
+         * Defining GridLayout for displaying nights list
+         * Remove GridLayoutLManager from the RecyclerView tag in XML
+         **/
+        val manager = GridLayoutManager(activity,3)
+        binding.sleepList.layoutManager = manager
 
         /**When there is new night, set it to data**/
         sleepTrackerViewModel.nights.observe(viewLifecycleOwner, Observer {
