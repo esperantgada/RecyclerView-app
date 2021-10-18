@@ -105,6 +105,7 @@ class SleepTrackerFragment : Fragment() {
         /**
          * Defining GridLayout for displaying nights list
          * Remove GridLayoutLManager from the RecyclerView tag in XML
+         * 3 represents the number of columns
          **/
         val manager = GridLayoutManager(activity,3)
         binding.sleepList.layoutManager = manager
